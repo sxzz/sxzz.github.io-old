@@ -1,49 +1,26 @@
-$(function () {
-  var imgList = $('.recent-post-item img').not('.no-fancybox')
-  if (imgList.length === 0) {
-    imgList = $('#post-content img').not('.no-fancybox')
+// fancybox js
+let fancyTimer = setInterval(function(){
+  if(!window.$){
+    return;
   }
-  for (var i = 0; i < imgList.length; i++) {
-    var $a = $(
-      '<a href="' +
-        imgList[i].src +
-        '" data-fancybox="group" data-caption="' +
-        imgList[i].alt +
-        '" class="fancybox"></a>'
-    )
-    var alt = imgList[i].alt
-    var $wrap = $(imgList[i]).wrap($a)
-    if (alt) {
-      $wrap.after('<div class="img-alt">' + alt + '</div>')
-    }
-  }
-
-  $().fancybox({
-    selector: '[data-fancybox]',
-    loop: true,
-    transitionEffect: 'slide',
-    buttons: ['share', 'slideShow', 'fullScreen', 'download', 'thumbs', 'close']
-  })
-
-  var galleryItem = $('.gallery-item')
-  var galleryList = []
-  galleryItem.each(function (idx, elem) {
-    galleryList.push({
-      src: $(elem).data('url'),
-      opts: {
-        caption: $(elem).data('title')
+  $(document).ready(function() {
+    $(".markdown-body img").each(function () {
+      if($(this).parent().get(0).tagName.toLowerCase() === "a") {
+        return;
       }
-    })
-  })
-  galleryItem.on('click', function () {
-    $.fancybox.open(
-      galleryList,
-      {
-        loop: true,
-        transitionEffect: 'slide'
-      },
-      galleryItem.index(this)
-    )
-    return false
-  })
-})
+      // $(this).attr("data-fancybox", "gallery"); // if you add 'data-fancybox', img will display after showed
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("style", "text-decoration: none; outline: none; border: 0px none transparent;");
+      // 判断是否启用了lazyload图片懒加载
+      if ($(this).attr("data-original")) {
+        $(element).attr("href", $(this).attr("data-original"));
+      } else {
+        $(element).attr("href", $(this).attr("src"));
+      }
+      $(this).wrap(element);
+    });
+
+    clearInterval(fancyTimer);
+  });
+}, 10);
